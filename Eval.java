@@ -41,33 +41,33 @@ public class Eval{
 
     private static void createTreeMap(String path){
         String tmp = "";
-        int docId = 0;
+        int docId = 1;
         Boolean stopword = true;
 
         try{
             Scanner scanner = new Scanner(new File(path));
-            while ( scanner.hasNextLine()){
+            while (scanner.hasNextLine()){
                 tmp = scanner.nextLine();
                 if (tmp.substring(0,2).toLowerCase().equals(".i")) {
-                    docId = Integer.parseInt( tmp.substring(3));
+                    docId = Integer.parseInt(tmp.substring(3));
+                    System.out.println(docId);
                     tmp = scanner.nextLine();
+                    //System.out.println(tmp);
                 }
                 if (tmp.toLowerCase().equals(".w")) {
                     tmp = scanner.nextLine();
-                    // stop scanning if next line is .B or .W
-                    while (!tmp.toLowerCase().equals(".n") && !tmp.toLowerCase().equals(null)) {
+                    System.out.println(tmp);
+                    // stop scanning if next line is .N
+                    while (!tmp.toLowerCase().equals(".n")) {
                         // remove all chars that are not a-zA-Z
                         updateTreeMaps(tmp, docId, stopword);
                         tmp = scanner.nextLine();
                     }
+                if(tmp == ".I 0"){
+                    break;
                 }
 
-                if(tmp.toLowerCase().equals(".w")){
-                    tmp = scanner.nextLine();
-                    while(!tmp.toLowerCase().equals(null)){
-                        updateTreeMaps(tmp,docId,stopword);
-                        tmp = scanner.nextLine();
-                    }
+                    
                 }
             }
 

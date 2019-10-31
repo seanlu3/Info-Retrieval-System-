@@ -19,7 +19,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Search {
-    private static String dictionaryPath = "dictionary.txt";
+    private static String dictionaryPath = "testing.txt";
     private static String postingPath = "posting.txt";
     final static Double NUMTOTALDOCS = (double) 4.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
@@ -308,9 +308,12 @@ public class Search {
 			while ((line = br.readLine()) != null) {
 				if (line.contentEquals(location)) {
 					line = br.readLine();
-					line = br.readLine();
+                    line = br.readLine();
+                    if(cosSim != 0.0){
+                        System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+                    }
 					// System.out.println(temp+" "+documentID);
-					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+					
 					break;
 				}
 			}
