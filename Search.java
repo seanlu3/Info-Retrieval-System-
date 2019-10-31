@@ -249,10 +249,7 @@ public class Search {
             System.out.print(sim + " ");
             docId++;
         }
-        for(String index1 : userQuery.keySet()){
-            if (weightmap.containsKey(index1)){
-                
-            }
+        
 
         }
 
