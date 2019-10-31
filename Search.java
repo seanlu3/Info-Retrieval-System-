@@ -19,9 +19,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Search {
-    private static String dictionaryPath = "testing.txt";
+    private static String dictionaryPath = "cacm.all";
     private static String postingPath = "posting.txt";
-    final static Double NUMTOTALDOCS = (double) 4.0; //total number of document is 3204.
+    final static Double NUMTOTALDOCS = (double) 3204.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
@@ -42,6 +42,7 @@ public class Search {
         
         
     }
+
 
     private static void getIdf(String path){
     	String token1 = "";
@@ -299,7 +300,7 @@ public class Search {
     }
     public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
 		int documentID = docID;
-		String fileName = "testing.txt" + "";
+		String fileName = "dictionary.txt" + "";
 		// int temp = 1;
 		String location = ".I " + documentID + "";
 		String line;

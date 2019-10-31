@@ -23,8 +23,9 @@ public class Eval{
 
     public static void main(String args[]){
         createStopwordList(stopwordPath);
-        createTreeMap(queryTextFilePath);    
-        System.out.println(query);    
+        createTreeMap(queryTextFilePath);   
+        searchQuery() ;
+       // System.out.println(query);    
     }
 
     private static void createStopwordList(String path){
@@ -76,7 +77,7 @@ public class Eval{
                 tmp = scanner.nextLine();
                 if (tmp.substring(0,2).toLowerCase().equals(".i")) {
                     docId = Integer.parseInt(tmp.substring(3));
-                    System.out.println(docId);
+                    //System.out.println(docId);
                     tmp = scanner.nextLine();
                     //System.out.println(tmp);
                 }
@@ -85,7 +86,7 @@ public class Eval{
                     // stop scanning if next line is .N
                     while (!tmp.toLowerCase().equals(".n")) {
                         // remove all chars that are not a-zA-Z
-                    	System.out.println(tmp);
+                    	//System.out.println(tmp);
                         updateTreeMaps(tmp, docId, stopword);
                         tmp = scanner.nextLine();
                     }
@@ -123,5 +124,20 @@ public class Eval{
     
         }
         termScanner.close();
+    }
+
+
+    private static void searchQuery(){
+        int docId = 1;
+        ArrayList<String> w = new ArrayList<String>();
+        System.out.println(query);
+        for (String term : query.keySet()){
+            if (query.get(term) == docId){
+                w.add(term); 
+            } 
+        }
+        System.out.println(w);
+        
+        Search a = new Search();
     }
 }
