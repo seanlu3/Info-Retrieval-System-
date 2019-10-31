@@ -18,14 +18,16 @@ public class Eval{
     private static String qrelsFilePath = "qrels.text";
     private static String stopwordPath = "stopwords.txt";
     private static ArrayList<String> stopwordList = new ArrayList<String>();
-    private static Map<String, Integer> query = new TreeMap<String, Integer>();
+   // private static Map<String, Integer> query = new TreeMap<String, Integer>();
+
+    private static Map<Integer, ArrayList<String>> queries = new TreeMap<Integer, ArrayList<String>>();
 
 
     public static void main(String args[]){
         createStopwordList(stopwordPath);
         createTreeMap(queryTextFilePath);   
         searchQuery() ;
-       // System.out.println(query);    
+        //System.out.println(queries);    
     }
 
     private static void createStopwordList(String path){
@@ -45,6 +47,8 @@ public class Eval{
     	//This removes the blank lines from query.txt
     	Scanner file;
         PrintWriter writer;
+        
+
         try {
 
             file = new Scanner(new File("query.text"));
@@ -84,12 +88,16 @@ public class Eval{
                 if (tmp.toLowerCase().equals(".w")) {
                     tmp = scanner.nextLine();
                     // stop scanning if next line is .N
+                    ArrayList<String> sentence = new ArrayList<String>();
                     while (!tmp.toLowerCase().equals(".n")) {
                         // remove all chars that are not a-zA-Z
-                    	//System.out.println(tmp);
-                        updateTreeMaps(tmp, docId, stopword);
+                        //System.out.println(tmp);
+                            sentence.add(tmp);
+                            queries.put(docId, sentence);
+                        //updateTreeMaps(tmp, docId, stopword);
                         tmp = scanner.nextLine();
                     }
+                    //System.out.println(sentence);
                 if(tmp == ".I 0"){
                     break;
                 }
@@ -105,9 +113,21 @@ public class Eval{
         }
     }
 
+    private static void searchQuery(){
+        Search search = new Search();
+        for(int index: queries.keySet()){
+            String toBeSearched ="";
+            for(String index1 : queries.get(index)){
+                toBeSearched += index1;
+            }
+            search.getResult(toBeSearched);
+           
+        }
+    }
 
 
 
+/*
     private static void updateTreeMaps(String input, int id, Boolean stopword){
         String temp;
         input = input.replaceAll("[^a-zA-Z ]", " ");
@@ -125,19 +145,20 @@ public class Eval{
         }
         termScanner.close();
     }
-
-
+*/
+/*
     private static void searchQuery(){
         int docId = 1;
         ArrayList<String> w = new ArrayList<String>();
-        System.out.println(query);
+        //System.out.println(query);
         for (String term : query.keySet()){
             if (query.get(term) == docId){
                 w.add(term); 
             } 
         }
-        System.out.println(w);
+        //System.out.println(w);
         
         Search a = new Search();
     }
+    */
 }

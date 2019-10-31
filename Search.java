@@ -263,20 +263,90 @@ public class Search {
             results.put(docId, sim);
             docId++;
         }
-        for(String index1 : userQuery.keySet()){
-            if (weightmap.containsKey(index1)){
+        } catch(Exception e) {System.out.println("Term not found: " + e);}
+
+    }
+    
+   public static void getResult(String a){
+        userQuary(a);
+        sortResults();
+    }
+   public static void userQuary(String b){
+        String token1 = "";
+        double nWeight = 0; //normailized query weight
+        Map<String, Integer> userQuery = new TreeMap<String, Integer>();
+        Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+        Scanner scan = new Scanner(b);
+        token1 = scan.nextLine();
+        token1 = token1.toLowerCase();
+        //System.out.println(token1);
+        String[] term = token1.split(" ");
+        
+        
+        try {
+        //get each term term frequency and store them in the map userQuery.
+        for (String st : term){
+           if(!userQuery.containsKey(st)){
+             userQuery.put(st,1);
+           }else {
+             userQuery.put(st, userQuery.get(st)+1);
+           }
+        }
+        for(String index : userQuery.keySet()){
+            double f = userQuery.get(index);
+            double tf = 1 + Math.log10(f);
+            double idf;
+            try {
+            	idf = dictionaryidf.get(index);
+                double w = tf * idf;
+                //System.out.println(index + "f= " + f + " tf= "+ tf + " idf= " + idf + " w= "+ w);
+                normalizedUserQuery.put(index, w);
+            }catch (Exception e) {}
+
+        }
+
+        //System.out.println(normalizedUserQuery);
+        double temp = 0;
+        for(double weight : normalizedUserQuery.values()){
+            temp += weight * weight;
+        }
+        nWeight = Math.sqrt(temp);
+        //System.out.println(nWeight);
+        scan.close();
+
+
+
+        double sim = 0;
+        int docId = 1;
+
+        while (docId <= NUMTOTALDOCS){
+            double top = 0;
+            for( String index1 : userQuery.keySet()){
+                if(dictionaryidf.containsKey(index1)){
+                    if(weightmap.get(index1).get(docId) == null){
+                        continue;
+                    }
+                     top += weightmap.get(index1).get(docId) * normalizedUserQuery.get(index1);
+                    
+                }
+                
                 
             }
-
+        
+            //System.out.println(top);
+            double tmp = normalizedWeight.get(docId) * nWeight;
+            sim = (double) top / tmp;
+            //System.out.print(sim + " ");
+            //System.out.println(docId + "\n");
+            results.put(docId, sim);
+            docId++;
         }
         } catch(Exception e) {System.out.println("Term not found: " + e);}
 
-        } catch(Exception e) {System.out.println("Term not found");
     }
+   
 
-}
-
-    private static void sortResults(){
+    public static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	int count = 0;
