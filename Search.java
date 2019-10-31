@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.FileInputStream;  
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedList;
@@ -12,6 +13,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.lang.Math.*;
+import java.util.*;
+import java.lang.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class Search {
     private static String dictionaryPath = "dictionary.txt";
@@ -21,7 +26,7 @@ public class Search {
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
     private static Map<Integer, Double> normalizedWeight = new TreeMap<Integer, Double>();
-   
+    private static HashMap<Integer, Double> results = new HashMap<Integer, Double>();
    
 
 
@@ -32,6 +37,7 @@ public class Search {
         getWeight(dictionaryPath);
         normalizeWeight();
         userQuary();
+        sortResults();
         //System.out.println(posting.get("wrong").get(1112));
         
         
@@ -198,7 +204,7 @@ public class Search {
         String[] term = token1.split(" ");
         
         
-
+        try {
         //get each term term frequency and store them in the map userQuery.
         for (String st : term){
            if(!userQuery.containsKey(st)){
@@ -243,18 +249,75 @@ public class Search {
                 
                 
             }
+        
             //System.out.println(top);
             double tmp = normalizedWeight.get(docId) * nWeight;
             sim = (double) top / tmp;
-            System.out.print(sim + " ");
+            //System.out.print(sim + " ");
+            //System.out.println(docId + "\n");
+            results.put(docId, sim);
             docId++;
         }
-        
+        for(String index1 : userQuery.keySet()){
+            if (weightmap.containsKey(index1)){
+                
+            }
 
         }
+        } catch(Exception e) {System.out.println("Term not found");}
 
     }
 
-
-
+    private static void sortResults(){
+    	//Creates a sortedResults map to store the key value pairs once sorted
+    	Map<Integer, Double> sortedResults = sortByValue(results);
+    	//Prints sorted results map
+    	try {
+    	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
+            //System.out.printf("docID = " + en.getKey() +  
+                          //", Cosine Sim = %.3f %n", en.getValue()); 
+    		printTitle(en.getKey(), en.getValue());
+        } 
+    	}catch(Exception e) {System.out.println(e);}
+    }
+    public static HashMap<Integer, Double> sortByValue(HashMap<Integer, Double> hm) {
+        // Create a list from elements of HashMap 
+        List<Map.Entry<Integer, Double> > list = 
+               new LinkedList<Map.Entry<Integer, Double> >(hm.entrySet()); 
+  
+        // Sort the list 
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Double> >() { 
+            public int compare(Map.Entry<Integer, Double> o1,  
+                               Map.Entry<Integer, Double> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        }); 
+          
+        // put data from sorted list to hashmap  
+        HashMap<Integer, Double> temp = new LinkedHashMap<Integer, Double>(); 
+        for (Map.Entry<Integer, Double> aa : list) { 
+            temp.put(aa.getKey(), aa.getValue()); 
+        } 
+        return temp;     	
+    }
+    public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
+		int documentID = docID;
+		String fileName = "testing.txt" + "";
+		// int temp = 1;
+		String location = ".I " + documentID + "";
+		String line;
+		//Reads the file to get and print the title of document with docID
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			while ((line = br.readLine()) != null) {
+				if (line.contentEquals(location)) {
+					line = br.readLine();
+					line = br.readLine();
+					// System.out.println(temp+" "+documentID);
+					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+					break;
+				}
+			}
+		}
+	}
 }
