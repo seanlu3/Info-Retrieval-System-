@@ -1,0 +1,33 @@
+.I 1
+.T
+Information retrieval systems
+.B
+CACM December, 1958
+.A
+Perlis, A. J.
+Samelson,K.
+.N
+CA581203 JB March 22, 1978  8:28 PM
+.I 2
+.T
+Information storage, information management, information retrieval
+.B
+CACM December, 1958
+.A
+Sugai, I.
+.I 3
+.T
+Digital image processing systems
+.B
+CACM December, 1958
+.A
+Friedman, M. D.
+.N
+CA581201 JB March 22, 1978  8:30 PM
+.I 4
+.T
+Image processing, image retrieval
+.B
+CACM November, 1958
+.N
+CA581103 JB March 22, 1978  8:32 PM

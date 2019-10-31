@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class Invert{
     
-    private static String path = "cacm.all";
+    private static String path = "testing.txt";
     private static String dictionaryFilePath = "dictionary.txt";
     private static String postingFilePath = "posting.txt";
     private static String stopwordPath = "stopwords.txt";
