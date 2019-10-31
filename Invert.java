@@ -17,6 +17,7 @@ public class Invert{
     private static String dictionaryFilePath = "dictionary.txt";
     private static String postingFilePath = "posting.txt";
     private static String stopwordPath = "stopwords.txt";
+    private static boolean stopwordvar = false;
     private static ArrayList<String> stopwordList = new ArrayList<String>();
     private static Map<String, Integer> dictionary = new TreeMap<String, Integer>();//dictionary list
     //posting stores term, documentID and term frequency.
@@ -53,6 +54,7 @@ public class Invert{
         Scanner scan = new Scanner(System.in);
         if (scan.nextLine().toLowerCase().equals("y")){
             stopword = true;
+            stopwordvar = true;
         }
         scan.close();
 
@@ -95,7 +97,19 @@ private static void updateTreeMaps(String input, int id, Boolean stopword){
     Scanner termScanner = new Scanner(input);
     while(termScanner.hasNext()){
         temp = termScanner.next().toLowerCase();
+        Stemmer s = new Stemmer();
+    	String words[] = temp.split(" ");
         if(stopword){
+        	for (int i = 0; i < words.length; i++) {
+				for (int j = 0; j < words[i].length(); j++) {
+					char c = words[i].charAt(j);
+					s.add(c);
+				}
+				s.stem();
+				words[i] = s.toString();
+				temp = String.join("", words);
+    	}
+
             if(!stopwordList.contains(temp)){
                 update(temp,id);
             }

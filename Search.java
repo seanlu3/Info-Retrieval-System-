@@ -193,16 +193,41 @@ public class Search {
 
     private static void userQuary(){
         String token1 = "";
+        String stopstem = "";
         double nWeight = 0; //normailized query weight
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+        
+        
         Scanner scan = new Scanner(System.in);
+        System.out.println("Stop word removal/stemming? (y/n): ");
+        stopstem = scan.nextLine();
+        System.out.println(stopstem);
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
         //System.out.println(token1);
         String[] term = token1.split(" ");
-        
+        int count = 0;
+        if(stopstem.equals("y")) {
+        for (String st : term) {
+            Stemmer s = new Stemmer();
+        	String words[] = st.split(" ");
+        	for (int i = 0; i < words.length; i++) {
+				for (int j = 0; j < words[i].length(); j++) {
+					char c = words[i].charAt(j);
+					s.add(c);
+				}
+				s.stem();
+				words[i] = s.toString();
+				term[count] = String.join("", words);
+
+        	}
+        	
+        	count++;
+        }
+        }
+
         
         try {
         //get each term term frequency and store them in the map userQuery.
@@ -281,7 +306,7 @@ public class Search {
     	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
             //System.out.printf("docID = " + en.getKey() +  
                           //", Cosine Sim = %.3f %n", en.getValue()); 
-    		if(en.getValue() > 0 && count < 20) {
+    		if(en.getValue() > 0 && count < 50) {
     		printTitle(en.getKey(), en.getValue());
     		count++;
     		}
@@ -322,6 +347,7 @@ public class Search {
 					line = br.readLine();
 					line = br.readLine();
 					// System.out.println(temp+" "+documentID);
+					if(docID == 756 || docID == 1307 || docID == 1502 || docID == 2035 || docID == 2299 || docID == 2399 || docID == 2501 || docID == 2820) {System.out.println("HIT");}
 					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
 					break;
 				}
