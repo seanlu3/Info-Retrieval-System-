@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.lang.Math.*;
 import java.util.*;
 import java.lang.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class Search {
     private static String dictionaryPath = "dictionary.txt";
@@ -270,10 +272,13 @@ public class Search {
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	//Prints sorted results map
+    	try {
     	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
-            System.out.printf("docID = " + en.getKey() +  
-                          ", Cosine Sim = %.3f %n", en.getValue()); 
+            //System.out.printf("docID = " + en.getKey() +  
+                          //", Cosine Sim = %.3f %n", en.getValue()); 
+    		printTitle(en.getKey(), en.getValue());
         } 
+    	}catch(Exception e) {System.out.println(e);}
     }
     public static HashMap<Integer, Double> sortByValue(HashMap<Integer, Double> hm) {
         // Create a list from elements of HashMap 
@@ -296,5 +301,23 @@ public class Search {
         } 
         return temp;     	
     }
-
+    public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
+		int documentID = docID;
+		String fileName = "testing.txt" + "";
+		// int temp = 1;
+		String location = ".I " + documentID + "";
+		String line;
+		//Reads the file to get and print the title of document with docID
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			while ((line = br.readLine()) != null) {
+				if (line.contentEquals(location)) {
+					line = br.readLine();
+					line = br.readLine();
+					// System.out.println(temp+" "+documentID);
+					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+					break;
+				}
+			}
+		}
+	}
 }
