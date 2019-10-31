@@ -20,12 +20,18 @@ public class Search {
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
+    private static Map<Integer, Double> normalizedWeight = new TreeMap<Integer, Double>();
+   
+   
+
 
 
     public static void main (String[] args){
         getIdf(postingPath);
         getItf(postingPath);
         getWeight(dictionaryPath);
+        normalizeWeight();
+        userQuary();
         //System.out.println(posting.get("wrong").get(1112));
         
         
@@ -154,5 +160,104 @@ public class Search {
     		}System.out.println(weightmap);
 
     }
+
+
+    private static void normalizeWeight(){
+        int docId = 1; //documentId starts at 1
+        //for each docId, we search on weightmap, calculate normalized weight for that docId
+        while (docId <= NUMTOTALDOCS){
+            double w = 0; 
+            for(Map.Entry<String,Map<Integer, Double>> entry : weightmap.entrySet()) {
+                for(Map.Entry<Integer, Double> entry1 : entry.getValue().entrySet()) {
+                    if (entry1.getKey() == docId){
+                        w += (entry1.getValue()) * (entry1.getValue()); //square of the weight for the docId
+                        //System.out.println(w);
+                    }
+                }
+
+            }
+            w = Math.sqrt(w); //normailized weight for the docId
+            //System.out.println(w);
+            normalizedWeight.put(docId, w);
+            //System.out.println(normalizedWeight);
+            docId++;
+        }
+       
+    }
+
+    private static void userQuary(){
+        String token1 = "";
+        double nWeight = 0; //normailized query weight
+        Map<String, Integer> userQuery = new TreeMap<String, Integer>();
+        Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Search: ");
+        token1 = scan.nextLine();
+        token1 = token1.toLowerCase();
+        //System.out.println(token1);
+        String[] term = token1.split(" ");
+        
+        
+
+        //get each term term frequency and store them in the map userQuery.
+        for (String st : term){
+           if(!userQuery.containsKey(st)){
+             userQuery.put(st,1);
+           }else {
+             userQuery.put(st, userQuery.get(st)+1);
+           }
+        }
+        for(String index : userQuery.keySet()){
+            double f = userQuery.get(index);
+            double tf = 1 + Math.log10(f);
+            double idf = dictionaryidf.get(index);
+            //System.out.println(idf);
+            double w = tf * idf;
+            normalizedUserQuery.put(index, w);
+        }
+
+        //System.out.println(normalizedUserQuery);
+        double temp = 0;
+        for(double weight : normalizedUserQuery.values()){
+            temp += weight * weight;
+        }
+        nWeight = Math.sqrt(temp);
+        //System.out.println(nWeight);
+        scan.close();
+
+
+
+        double sim = 0;
+        int docId = 1;
+
+        while (docId <= NUMTOTALDOCS){
+            double top = 0;
+            for( String index1 : userQuery.keySet()){
+                if(dictionaryidf.containsKey(index1)){
+                    if(weightmap.get(index1).get(docId) == null){
+                        continue;
+                    }
+                     top += weightmap.get(index1).get(docId) * normalizedUserQuery.get(index1);
+                    
+                }
+                
+                
+            }
+            //System.out.println(top);
+            double tmp = normalizedWeight.get(docId) * nWeight;
+            sim = (double) top / tmp;
+            System.out.print(sim + " ");
+            docId++;
+        }
+        for(String index1 : userQuery.keySet()){
+            if (weightmap.containsKey(index1)){
+                
+            }
+
+        }
+
+    }
+
+
 
 }
