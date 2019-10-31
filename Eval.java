@@ -115,6 +115,10 @@ public class Eval{
 
     private static void searchQuery(){
         Search search = new Search();
+        search.getIdf("posting.txt");
+        search.getItf("posting.txt");
+        search.getWeight("dictionary.txt");
+        search.normalizeWeight();
         for(int index: queries.keySet()){
             String toBeSearched ="";
             for(String index1 : queries.get(index)){

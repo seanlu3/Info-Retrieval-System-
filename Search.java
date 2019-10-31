@@ -44,7 +44,7 @@ public class Search {
     }
 
 
-    private static void getIdf(String path){
+    public static void getIdf(String path){
     	String token1 = "";
     	double df = 0.0;
     	double idf = 0.0;
@@ -78,7 +78,7 @@ public class Search {
     	}catch (Exception e) {System.out.println(e);}
     }
 
-    private static void getItf(String path){
+    public static void getItf(String path){
     	String tokenSplitByLine = "";
     	String[] tokenSplitBySpace;
     	int count = 0;
@@ -132,7 +132,7 @@ public class Search {
         	}catch (Exception e) {System.out.println(e);}
     }
     
-    private static void getWeight(String path){
+    public static void getWeight(String path){
     	//Create a String array that is as long as there are unique terms
     	String[] token1 = new String[dictionaryidf.size()];
     	int count = 0;
@@ -169,7 +169,7 @@ public class Search {
     }
 
 
-    private static void normalizeWeight(){
+    public static void normalizeWeight(){
         int docId = 1; //documentId starts at 1
         //for each docId, we search on weightmap, calculate normalized weight for that docId
         while (docId <= NUMTOTALDOCS){
@@ -293,9 +293,11 @@ public class Search {
     }
     
    public static void getResult(String a){
+        
         userQuary(a);
         sortResults();
     }
+
    public static void userQuary(String b){
         String token1 = "";
         double nWeight = 0; //normailized query weight
