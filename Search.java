@@ -292,17 +292,19 @@ public class Search {
 
     }
     
-   public static void getResult(String a){
-        
+   public static Map<Integer, Double> getResult(String a){
         userQuary(a);
-        sortResults();
+        return sortResultsQuery();
     }
 
    public static void userQuary(String b){
         String token1 = "";
+        String stopstem = "y";
         double nWeight = 0; //normailized query weight
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+
+
         Scanner scan = new Scanner(b);
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -372,8 +374,15 @@ public class Search {
 
     }
    
-
-    public static void sortResults(){
+    public static Map<Integer, Double> sortResultsQuery(){
+    	//Creates a sortedResults map to store the key value pairs once sorted
+    	Map<Integer, Double> sortedResults = sortByValue(results);
+    	int count = 0;
+    	//Prints sorted results map
+    	return sortedResults;
+    }
+    
+    private static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	int count = 0;
@@ -426,8 +435,7 @@ public class Search {
                         System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
                     }
 					// System.out.println(temp+" "+documentID);
-					if(docID == 756 || docID == 1307 || docID == 1502 || docID == 2035 || docID == 2299 || docID == 2399 || docID == 2501 || docID == 2820) {System.out.println("HIT");}
-					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+				
 					break;
 				}
 			}

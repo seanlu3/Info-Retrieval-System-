@@ -124,9 +124,11 @@ public class Eval{
             for(String index1 : queries.get(index)){
                 toBeSearched += index1;
             }
-            search.getResult(toBeSearched);
+            //docId with it's similarity score
+            Map<Integer, Double> test = search.getResult(toBeSearched));
            
         }
+        
     }
 
 
