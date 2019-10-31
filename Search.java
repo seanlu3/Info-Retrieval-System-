@@ -21,7 +21,7 @@ import java.io.FileReader;
 public class Search {
     private static String dictionaryPath = "dictionary.txt";
     private static String postingPath = "posting.txt";
-    final static Double NUMTOTALDOCS = (double) 4.0; //total number of document is 3204.
+    final static Double NUMTOTALDOCS = (double) 3204.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
@@ -216,10 +216,14 @@ public class Search {
         for(String index : userQuery.keySet()){
             double f = userQuery.get(index);
             double tf = 1 + Math.log10(f);
-            double idf = dictionaryidf.get(index);
-            //System.out.println(idf);
-            double w = tf * idf;
-            normalizedUserQuery.put(index, w);
+            double idf;
+            try {
+            	idf = dictionaryidf.get(index);
+                double w = tf * idf;
+                //System.out.println(index + "f= " + f + " tf= "+ tf + " idf= " + idf + " w= "+ w);
+                normalizedUserQuery.put(index, w);
+            }catch (Exception e) {}
+
         }
 
         //System.out.println(normalizedUserQuery);
@@ -264,19 +268,23 @@ public class Search {
             }
 
         }
-        } catch(Exception e) {System.out.println("Term not found");}
+        } catch(Exception e) {System.out.println("Term not found: " + e);}
 
     }
 
     private static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
+    	int count = 0;
     	//Prints sorted results map
     	try {
     	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
             //System.out.printf("docID = " + en.getKey() +  
                           //", Cosine Sim = %.3f %n", en.getValue()); 
+    		if(en.getValue() > 0 && count < 20) {
     		printTitle(en.getKey(), en.getValue());
+    		count++;
+    		}
         } 
     	}catch(Exception e) {System.out.println(e);}
     }
@@ -303,7 +311,7 @@ public class Search {
     }
     public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
 		int documentID = docID;
-		String fileName = "testing.txt" + "";
+		String fileName = "cacm.all" + "";
 		// int temp = 1;
 		String location = ".I " + documentID + "";
 		String line;
