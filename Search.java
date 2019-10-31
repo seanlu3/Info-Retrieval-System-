@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.FileInputStream;  
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.LinkedList;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.lang.Math.*;
+import java.util.*;
+import java.lang.*;
 
 public class Search {
     private static String dictionaryPath = "dictionary.txt";
@@ -20,12 +23,19 @@ public class Search {
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
+    private static Map<Integer, Double> normalizedWeight = new TreeMap<Integer, Double>();
+    private static HashMap<Integer, Double> results = new HashMap<Integer, Double>();
+   
+
 
 
     public static void main (String[] args){
         getIdf(postingPath);
         getItf(postingPath);
         getWeight(dictionaryPath);
+        normalizeWeight();
+        userQuary();
+        sortResults();
         //System.out.println(posting.get("wrong").get(1112));
         
         
@@ -153,6 +163,138 @@ public class Search {
     			weightmap.put(entry.getKey(), innerweightmap);
     		}System.out.println(weightmap);
 
+    }
+
+
+    private static void normalizeWeight(){
+        int docId = 1; //documentId starts at 1
+        //for each docId, we search on weightmap, calculate normalized weight for that docId
+        while (docId <= NUMTOTALDOCS){
+            double w = 0; 
+            for(Map.Entry<String,Map<Integer, Double>> entry : weightmap.entrySet()) {
+                for(Map.Entry<Integer, Double> entry1 : entry.getValue().entrySet()) {
+                    if (entry1.getKey() == docId){
+                        w += (entry1.getValue()) * (entry1.getValue()); //square of the weight for the docId
+                        //System.out.println(w);
+                    }
+                }
+
+            }
+            w = Math.sqrt(w); //normailized weight for the docId
+            //System.out.println(w);
+            normalizedWeight.put(docId, w);
+            //System.out.println(normalizedWeight);
+            docId++;
+        }
+       
+    }
+
+    private static void userQuary(){
+        String token1 = "";
+        double nWeight = 0; //normailized query weight
+        Map<String, Integer> userQuery = new TreeMap<String, Integer>();
+        Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Search: ");
+        token1 = scan.nextLine();
+        token1 = token1.toLowerCase();
+        //System.out.println(token1);
+        String[] term = token1.split(" ");
+        
+        
+        try {
+        //get each term term frequency and store them in the map userQuery.
+        for (String st : term){
+           if(!userQuery.containsKey(st)){
+             userQuery.put(st,1);
+           }else {
+             userQuery.put(st, userQuery.get(st)+1);
+           }
+        }
+        for(String index : userQuery.keySet()){
+            double f = userQuery.get(index);
+            double tf = 1 + Math.log10(f);
+            double idf = dictionaryidf.get(index);
+            //System.out.println(idf);
+            double w = tf * idf;
+            normalizedUserQuery.put(index, w);
+        }
+
+        //System.out.println(normalizedUserQuery);
+        double temp = 0;
+        for(double weight : normalizedUserQuery.values()){
+            temp += weight * weight;
+        }
+        nWeight = Math.sqrt(temp);
+        //System.out.println(nWeight);
+        scan.close();
+
+
+
+        double sim = 0;
+        int docId = 1;
+
+        while (docId <= NUMTOTALDOCS){
+            double top = 0;
+            for( String index1 : userQuery.keySet()){
+                if(dictionaryidf.containsKey(index1)){
+                    if(weightmap.get(index1).get(docId) == null){
+                        continue;
+                    }
+                     top += weightmap.get(index1).get(docId) * normalizedUserQuery.get(index1);
+                    
+                }
+                
+                
+            }
+        
+            //System.out.println(top);
+            double tmp = normalizedWeight.get(docId) * nWeight;
+            sim = (double) top / tmp;
+            //System.out.print(sim + " ");
+            //System.out.println(docId + "\n");
+            results.put(docId, sim);
+            docId++;
+        }
+        for(String index1 : userQuery.keySet()){
+            if (weightmap.containsKey(index1)){
+                
+            }
+
+        }
+        } catch(Exception e) {System.out.println("Term not found");}
+
+    }
+
+    private static void sortResults(){
+    	//Creates a sortedResults map to store the key value pairs once sorted
+    	Map<Integer, Double> sortedResults = sortByValue(results);
+    	//Prints sorted results map
+    	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
+            System.out.printf("docID = " + en.getKey() +  
+                          ", Cosine Sim = %.3f %n", en.getValue()); 
+        } 
+    }
+    public static HashMap<Integer, Double> sortByValue(HashMap<Integer, Double> hm) {
+        // Create a list from elements of HashMap 
+        List<Map.Entry<Integer, Double> > list = 
+               new LinkedList<Map.Entry<Integer, Double> >(hm.entrySet()); 
+  
+        // Sort the list 
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Double> >() { 
+            public int compare(Map.Entry<Integer, Double> o1,  
+                               Map.Entry<Integer, Double> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        }); 
+          
+        // put data from sorted list to hashmap  
+        HashMap<Integer, Double> temp = new LinkedHashMap<Integer, Double>(); 
+        for (Map.Entry<Integer, Double> aa : list) { 
+            temp.put(aa.getKey(), aa.getValue()); 
+        } 
+        return temp;     	
     }
 
 }
