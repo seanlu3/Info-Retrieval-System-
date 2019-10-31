@@ -21,7 +21,7 @@ import java.io.FileReader;
 public class Search {
     private static String dictionaryPath = "dictionary.txt";
     private static String postingPath = "posting.txt";
-    final static Double NUMTOTALDOCS = (double) 3204.0; //total number of document is 3204.
+    final static Double NUMTOTALDOCS = (double) 4.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
@@ -42,6 +42,7 @@ public class Search {
         
         
     }
+
 
     private static void getIdf(String path){
     	String token1 = "";
@@ -198,11 +199,10 @@ public class Search {
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
         
-        
         Scanner scan = new Scanner(System.in);
         System.out.println("Stop word removal/stemming? (y/n): ");
         stopstem = scan.nextLine();
-        System.out.println(stopstem);
+        //System.out.println(stopstem);
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -287,17 +287,92 @@ public class Search {
             results.put(docId, sim);
             docId++;
         }
-        for(String index1 : userQuery.keySet()){
-            if (weightmap.containsKey(index1)){
+        } catch(Exception e) {System.out.println("Term not found: " + e);}
+
+    }
+    
+   public static void getResult(String a){
+        userQuary(a);
+        sortResults();
+    }
+   public static void userQuary(String b){
+        String token1 = "";
+        double nWeight = 0; //normailized query weight
+        Map<String, Integer> userQuery = new TreeMap<String, Integer>();
+        Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+        Scanner scan = new Scanner(b);
+        token1 = scan.nextLine();
+        token1 = token1.toLowerCase();
+        //System.out.println(token1);
+        String[] term = token1.split(" ");
+        
+        
+        try {
+        //get each term term frequency and store them in the map userQuery.
+        for (String st : term){
+           if(!userQuery.containsKey(st)){
+             userQuery.put(st,1);
+           }else {
+             userQuery.put(st, userQuery.get(st)+1);
+           }
+        }
+        for(String index : userQuery.keySet()){
+            double f = userQuery.get(index);
+            double tf = 1 + Math.log10(f);
+            double idf;
+            try {
+            	idf = dictionaryidf.get(index);
+                double w = tf * idf;
+                //System.out.println(index + "f= " + f + " tf= "+ tf + " idf= " + idf + " w= "+ w);
+                normalizedUserQuery.put(index, w);
+            }catch (Exception e) {}
+
+        }
+
+        //System.out.println(normalizedUserQuery);
+        double temp = 0;
+        
+        for(double weight : normalizedUserQuery.values()){
+            temp += weight * weight;
+        }
+        nWeight = Math.sqrt(temp);
+        //System.out.println(nWeight);
+        scan.close();
+
+
+
+        double sim = 0;
+        int docId = 1;
+
+        while (docId <= NUMTOTALDOCS){
+            double top = 0;
+            for( String index1 : userQuery.keySet()){
+                if(dictionaryidf.containsKey(index1)){
+                    if(weightmap.get(index1).get(docId) == null){
+                        continue;
+                    }
+                     top += weightmap.get(index1).get(docId) * normalizedUserQuery.get(index1);
+                }
+                
                 
             }
-
+        
+            //System.out.println(normalizedWeight);
+            
+            double tmp = normalizedWeight.get(docId) * nWeight;
+            //System.out.println(docId);
+            sim = (double) top / tmp;
+            //System.out.print(sim + " ");
+            //System.out.println(docId + "\n");
+            results.put(docId, sim);
+            docId++;
         }
         } catch(Exception e) {System.out.println("Term not found: " + e);}
 
     }
+   
 
-    private static void sortResults(){
+    public static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	int count = 0;
@@ -336,7 +411,7 @@ public class Search {
     }
     public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
 		int documentID = docID;
-		String fileName = "cacm.all" + "";
+		String fileName = "testing.txt" + "";
 		// int temp = 1;
 		String location = ".I " + documentID + "";
 		String line;
@@ -345,10 +420,12 @@ public class Search {
 			while ((line = br.readLine()) != null) {
 				if (line.contentEquals(location)) {
 					line = br.readLine();
-					line = br.readLine();
+                    line = br.readLine();
+                    if(cosSim != 0.0){
+                        System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+                    }
 					// System.out.println(temp+" "+documentID);
-					if(docID == 756 || docID == 1307 || docID == 1502 || docID == 2035 || docID == 2299 || docID == 2399 || docID == 2501 || docID == 2820) {System.out.println("HIT");}
-					System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+
 					break;
 				}
 			}
