@@ -49,37 +49,26 @@ public class Eval{
             while ( scanner.hasNextLine()){
                 tmp = scanner.nextLine();
                 if (tmp.substring(0,2).toLowerCase().equals(".i")) {
-                    docId = Integer.parseInt(tmp.substring(3));
-					tmp = scanner.nextLine();
+                    docId = Integer.parseInt( tmp.substring(3));
+                    tmp = scanner.nextLine();
                 }
                 if (tmp.toLowerCase().equals(".w")) {
-					tmp = scanner.nextLine();
-					// stop scanning if next line is .B or .W
-					while (!tmp.toLowerCase().equals(".n") && !tmp.isEmpty()){
-						// remove all chars that are not a-zA-Z
-						updateTreeMaps(tmp,docId,stopword);
-						tmp = scanner.nextLine();
-					}
-                }
-
-                if(tmp.toLowerCase().equals(".a")){
                     tmp = scanner.nextLine();
-                    while (!tmp.toLowerCase().equals(".n") && !tmp.isEmpty()){
-						// remove all chars that are not a-zA-Z
-						updateTreeMaps(tmp,docId,stopword);
-						tmp = scanner.nextLine();
-					}
+                    // stop scanning if next line is .B or .W
+                    while (!tmp.toLowerCase().equals(".n") && !tmp.toLowerCase().equals(null)) {
+                        // remove all chars that are not a-zA-Z
+                        updateTreeMaps(tmp, docId, stopword);
+                        tmp = scanner.nextLine();
+                    }
                 }
 
-                if(tmp.toLowerCase().equals(".n")){
+                if(tmp.toLowerCase().equals(".w")){
                     tmp = scanner.nextLine();
-                    while (!tmp.isEmpty()) {
-						// remove all chars that are not a-zA-Z
-						updateTreeMaps(tmp,docId,stopword);
-						tmp = scanner.nextLine();
-					}
+                    while(!tmp.toLowerCase().equals(null)){
+                        updateTreeMaps(tmp,docId,stopword);
+                        tmp = scanner.nextLine();
+                    }
                 }
-
             }
 
             scanner.close();

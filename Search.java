@@ -258,15 +258,11 @@ public class Search {
             results.put(docId, sim);
             docId++;
         }
-        for(String index1 : userQuery.keySet()){
-            if (weightmap.containsKey(index1)){
-                
-            }
 
-        }
-        } catch(Exception e) {System.out.println("Term not found");}
-
+        } catch(Exception e) {System.out.println("Term not found");
     }
+
+}
 
     private static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
