@@ -217,10 +217,14 @@ public class Search {
         for(String index : userQuery.keySet()){
             double f = userQuery.get(index);
             double tf = 1 + Math.log10(f);
-            double idf = dictionaryidf.get(index);
-            //System.out.println(idf);
-            double w = tf * idf;
-            normalizedUserQuery.put(index, w);
+            double idf;
+            try {
+            	idf = dictionaryidf.get(index);
+                double w = tf * idf;
+                //System.out.println(index + "f= " + f + " tf= "+ tf + " idf= " + idf + " w= "+ w);
+                normalizedUserQuery.put(index, w);
+            }catch (Exception e) {}
+
         }
 
         //System.out.println(normalizedUserQuery);
@@ -259,6 +263,13 @@ public class Search {
             results.put(docId, sim);
             docId++;
         }
+        for(String index1 : userQuery.keySet()){
+            if (weightmap.containsKey(index1)){
+                
+            }
+
+        }
+        } catch(Exception e) {System.out.println("Term not found: " + e);}
 
         } catch(Exception e) {System.out.println("Term not found");
     }
@@ -268,12 +279,16 @@ public class Search {
     private static void sortResults(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
+    	int count = 0;
     	//Prints sorted results map
     	try {
     	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
             //System.out.printf("docID = " + en.getKey() +  
                           //", Cosine Sim = %.3f %n", en.getValue()); 
+    		if(en.getValue() > 0 && count < 20) {
     		printTitle(en.getKey(), en.getValue());
+    		count++;
+    		}
         } 
     	}catch(Exception e) {System.out.println(e);}
     }
@@ -300,7 +315,7 @@ public class Search {
     }
     public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
 		int documentID = docID;
-		String fileName = "dictionary.txt" + "";
+		String fileName = "cacm.all" + "";
 		// int temp = 1;
 		String location = ".I " + documentID + "";
 		String line;
