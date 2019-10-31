@@ -10,10 +10,11 @@ import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 
 public class Eval{
-    private static String queryTextFilePath = "query.text";
+    private static String queryTextFilePath = "query1.text";
     private static String qrelsFilePath = "qrels.text";
     private static String stopwordPath = "stopwords.txt";
     private static ArrayList<String> stopwordList = new ArrayList<String>();
@@ -40,6 +41,31 @@ public class Eval{
 
 
     private static void createTreeMap(String path){
+    	//This removes the blank lines from query.txt
+    	Scanner file;
+        PrintWriter writer;
+        try {
+
+            file = new Scanner(new File("query.text"));
+            writer = new PrintWriter("query1.text");
+
+            while (file.hasNext()) {
+                String line = file.nextLine();
+                line = line.trim();
+                if (!line.equals("")) {
+                    writer.write(line);
+                    writer.write("\n");
+                }
+            }
+
+            file.close();
+            writer.close();
+
+        } catch (FileNotFoundException ex) {
+            
+        }
+        
+        //
         String tmp = "";
         int docId = 1;
         Boolean stopword = true;
@@ -56,10 +82,10 @@ public class Eval{
                 }
                 if (tmp.toLowerCase().equals(".w")) {
                     tmp = scanner.nextLine();
-                    System.out.println(tmp);
                     // stop scanning if next line is .N
                     while (!tmp.toLowerCase().equals(".n")) {
                         // remove all chars that are not a-zA-Z
+                    	System.out.println(tmp);
                         updateTreeMaps(tmp, docId, stopword);
                         tmp = scanner.nextLine();
                     }
@@ -73,8 +99,8 @@ public class Eval{
 
             scanner.close();
 
-        } catch(FileNotFoundException e){
-            e.printStackTrace();
+        } catch(Exception e){
+            System.out.println("End of file reached");
         }
     }
 
