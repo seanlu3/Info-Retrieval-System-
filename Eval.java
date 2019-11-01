@@ -178,8 +178,10 @@ public class Eval{
         double acc=0.0;
         double counter = 0;
         for(double db : mapList) {
+        	if(!(Double.isNaN(db))) {
         	acc+=db;
         	counter++;
+        	}
         }
         System.out.println("Final MAP value is: " + acc/counter);
         
