@@ -126,14 +126,41 @@ public class Eval{
             }
             //docId with it's similarity score
             Map<Integer, Double> test = search.getResult(toBeSearched);
-            System.out.println(toBeSearched);
+            //System.out.println(toBeSearched);
+            int count = 1;
+            double totalDocsChecked = 0;
+            double totalRelDocs = 0;
+            List<Double> apList = new ArrayList<>();
+            //System.out.println(toBeSearched);
             for(int st : test.keySet()) {
             	if (!(test.get(st).isNaN())) {
             		if(!(test.get(st)<0.1)) {
-            		System.out.print(st + " " + test.get(st) + "\n");
+            		//System.out.print(st + "\n");
+            		totalDocsChecked++;
+            		try {
+                	Scanner scanner = new Scanner(new File("qrels.text"));
+                	String token1 = "";
+                	String[] queryID;
+                    while (scanner.hasNext()){
+                    	//Checks dictionary line by line
+                        token1 = scanner.nextLine();
+                        queryID = token1.split(" ");
+                        //if(Integer.parseInt(queryID[0]) == count) {
+                        //System.out.println(count + " " + queryID[0] + " " + queryID[1]);
+                        //}
+                        if(Integer.parseInt(queryID[0]) == count && st == Integer.parseInt(queryID[1])) {
+                        	//System.out.println(toBeSearched + ": "+ st + " matched with "+ queryID[1]);
+                        	totalRelDocs++;
+                        	apList.add(totalRelDocs/totalDocsChecked);
+                        }
+                    }
+                    count++;
+                    scanner.close();
+            		}catch(Exception e) {}
             		}
             	}
             }
+            System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " returned (" + totalDocsChecked + ") results");
            
         }
         
