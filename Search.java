@@ -168,7 +168,7 @@ public class Search {
     			}
     			//Assigns inner map to the weight map using the current term (entry.getKey()) as the key
     			weightmap.put(entry.getKey(), innerweightmap);
-    		}System.out.println(weightmap);
+    		}//System.out.println(weightmap);
 
     }
 
@@ -385,14 +385,32 @@ public class Search {
         double nWeight = 0; //normailized query weight
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
-
-
+        
         Scanner scan = new Scanner(b);
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
         //System.out.println(token1);
         String[] term = token1.split(" ");
-        
+        int count = 0;
+        if(stopstem.equals("y")) {
+        for (String st : term) {
+            Stemmer s = new Stemmer();
+        	String words[] = st.split(" ");
+        	for (int i = 0; i < words.length; i++) {
+				for (int j = 0; j < words[i].length(); j++) {
+					char c = words[i].charAt(j);
+					s.add(c);
+				}
+				s.stem();
+				words[i] = s.toString();
+				term[count] = String.join("", words);
+
+        	}
+        	
+        	count++;
+        }
+        }
+
         
         try {
         //get each term term frequency and store them in the map userQuery.

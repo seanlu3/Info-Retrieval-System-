@@ -5,12 +5,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 
 
 public class Eval{
@@ -21,12 +23,14 @@ public class Eval{
    // private static Map<String, Integer> query = new TreeMap<String, Integer>();
 
     private static Map<Integer, ArrayList<String>> queries = new TreeMap<Integer, ArrayList<String>>();
-
+    private static Map<Integer, ArrayList<Integer>> reldocs = new TreeMap<Integer, ArrayList<Integer>>();
 
     public static void main(String args[]){
         createStopwordList(stopwordPath);
-        createTreeMap(queryTextFilePath);   
-        searchQuery() ;
+        createTreeMap(queryTextFilePath);  
+        scanReldocs(qrelsFilePath) ;
+        System.out.print(reldocs);
+        //searchQuery() ;
         //System.out.println(queries);    
     }
 
@@ -113,6 +117,32 @@ public class Eval{
         }
     }
 
+    private static void scanReldocs(String path){
+        String tmp = "";
+        int queryId = 0;
+        int queryId1 = 0;
+        int docId = 0;
+        try{
+            Scanner scanner = new Scanner(new File(path));
+            ArrayList<Integer> docIdInQuery = new ArrayList<Integer>();
+            while (scanner.hasNextLine()){
+                
+                tmp = scanner.nextLine();
+
+                queryId = Integer.parseInt(tmp.substring(0,2));
+                docId = Integer.parseInt(tmp.substring(3,7));
+                
+                docIdInQuery.add(docId);
+                reldocs.put(queryId, docIdInQuery);
+              
+                tmp = scanner.nextLine();
+                queryId1 = queryId;
+                }
+                
+            }catch(Exception e){}
+
+    }
+
     private static void searchQuery(){
         Search search = new Search();
         search.getIdf("posting.txt");
@@ -121,14 +151,36 @@ public class Eval{
         search.normalizeWeight();
         for(int index: queries.keySet()){
             String toBeSearched ="";
+            System.out.println(index);
+            Map<Integer, Double> test = new LinkedHashMap<Integer,Double>();
+            Map<Integer, Double> top10ret = new LinkedHashMap<Integer,Double>();
             for(String index1 : queries.get(index)){
                 toBeSearched += index1;
             }
+            
             //docId with it's similarity score
-            Map<Integer, Double> test = search.getResult(toBeSearched));
-           
+            test = search.getResult(toBeSearched);
+            for(Map.Entry<Integer, Double> index12:test.entrySet()){
+                if(top10ret.size()>9) break;
+                top10ret.put(index12.getKey(), index12.getValue());
+                //top10ret.add(index12.getValue());
+            }
+
+
+
+            System.out.println(top10ret);
+            /*
+            Map.Entry<Integer, Double> entry = test;
+            for ( int i = 0; i < 9; i++){
+                int tem = entry.values().toArray()[i];  
+                System.out.println(tem);
+                
+            }*/
         }
-        
+       
+            
+         
+    
     }
 
 
