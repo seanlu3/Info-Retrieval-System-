@@ -19,9 +19,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Search {
-    private static String dictionaryPath = "dictionary.txt";
+    private static String dictionaryPath = "cacm.all";
     private static String postingPath = "posting.txt";
-    final static Double NUMTOTALDOCS = (double) 4.0; //total number of document is 3204.
+    final static Double NUMTOTALDOCS = (double) 3204.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
@@ -43,8 +43,9 @@ public class Search {
         
     }
 
-
-    private static void getIdf(String path){
+    //get inverted document frequency 
+    //@param position list path
+    public static void getIdf(String path){
     	String token1 = "";
     	double df = 0.0;
     	double idf = 0.0;
@@ -78,7 +79,9 @@ public class Search {
     	}catch (Exception e) {System.out.println(e);}
     }
 
-    private static void getItf(String path){
+    //get inverted term frequency 
+    //@param position list path
+    public static void getItf(String path){
     	String tokenSplitByLine = "";
     	String[] tokenSplitBySpace;
     	int count = 0;
@@ -132,7 +135,8 @@ public class Search {
         	}catch (Exception e) {System.out.println(e);}
     }
     
-    private static void getWeight(String path){
+    //get weight value for each term 
+    public static void getWeight(String path){
     	//Create a String array that is as long as there are unique terms
     	String[] token1 = new String[dictionaryidf.size()];
     	int count = 0;
@@ -168,8 +172,8 @@ public class Search {
 
     }
 
-
-    private static void normalizeWeight(){
+    //normailzed the term weights for each document
+    public static void normalizeWeight(){
         int docId = 1; //documentId starts at 1
         //for each docId, we search on weightmap, calculate normalized weight for that docId
         while (docId <= NUMTOTALDOCS){
@@ -192,6 +196,7 @@ public class Search {
        
     }
 
+    //get user to put query, and perform search on the query terms
     private static void userQuary(){
         String token1 = "";
         String stopstem = "";
@@ -199,10 +204,11 @@ public class Search {
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
         
+        
         Scanner scan = new Scanner(System.in);
         System.out.println("Stop word removal/stemming? (y/n): ");
         stopstem = scan.nextLine();
-        //System.out.println(stopstem);
+        System.out.println(stopstem);
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -291,20 +297,121 @@ public class Search {
 
     }
     
-   public static void getResult(String a){
+    //get the docID and cosine similarity score for each query term 
+    //@param query term from query.text
+    //@return a map contains docID and cosine similarity score
+   public static Map<Integer, Double> getResult(String a){
         userQuary(a);
-        sortResults();
+        return sortResultsQuery();
     }
-   public static void userQuary(String b){
+
+   
+
+    private static void sortResults(){
+    	//Creates a sortedResults map to store the key value pairs once sorted
+    	Map<Integer, Double> sortedResults = sortByValue(results);
+    	int count = 0;
+    	//Prints sorted results map
+    	try {
+    	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
+            //System.out.printf("docID = " + en.getKey() +  
+                          //", Cosine Sim = %.3f %n", en.getValue()); 
+    		if(en.getValue() > 0 && count < 50) {
+    		printTitle(en.getKey(), en.getValue());
+    		count++;
+    		}
+        } 
+    	}catch(Exception e) {System.out.println(e);}
+    }
+
+    //sort results map
+    //@param hashmap that contains interger as key, double as value
+    //@return n/a
+    public static HashMap<Integer, Double> sortByValue(HashMap<Integer, Double> hm) {
+        // Create a list from elements of HashMap 
+        List<Map.Entry<Integer, Double> > list = 
+               new LinkedList<Map.Entry<Integer, Double> >(hm.entrySet()); 
+  
+        // Sort the list 
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Double> >() { 
+            public int compare(Map.Entry<Integer, Double> o1,  
+                               Map.Entry<Integer, Double> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        }); 
+          
+        // put data from sorted list to hashmap  
+        HashMap<Integer, Double> temp = new LinkedHashMap<Integer, Double>(); 
+        for (Map.Entry<Integer, Double> aa : list) { 
+            temp.put(aa.getKey(), aa.getValue()); 
+        } 
+        return temp;     	
+    }
+
+    //Print tile documentId and similarity score for the document
+    //@param docId, cosine similarity score
+    //@return output the docid, title, and similarity score for each document
+    public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
+		int documentID = docID;
+		String fileName = "cacm.all" + "";
+		// int temp = 1;
+		String location = ".I " + documentID + "";
+		String line;
+		//Reads the file to get and print the title of document with docID
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			while ((line = br.readLine()) != null) {
+				if (line.contentEquals(location)) {
+					line = br.readLine();
+                    line = br.readLine();
+                    if(cosSim != 0.0){
+                        System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
+                    }
+					// System.out.println(temp+" "+documentID);
+				
+					break;
+				}
+			}
+		}
+    }
+    
+
+    //function call for constructor 
+    //@param String, query string
+    //@return n/a
+    public static void userQuary(String b){
         String token1 = "";
+        String stopstem = "y";
         double nWeight = 0; //normailized query weight
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
+
+
         Scanner scan = new Scanner(b);
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
         //System.out.println(token1);
         String[] term = token1.split(" ");
+        int count = 0;
+        if(stopstem.equals("y")) {
+        for (String st : term) {
+            Stemmer s = new Stemmer();
+        	String words[] = st.split(" ");
+        	for (int i = 0; i < words.length; i++) {
+				for (int j = 0; j < words[i].length(); j++) {
+					char c = words[i].charAt(j);
+					s.add(c);
+				}
+				s.stem();
+				words[i] = s.toString();
+				term[count] = String.join("", words);
+
+        	}
+        	
+        	count++;
+        }
+        }
+
         
         
         try {
@@ -331,7 +438,6 @@ public class Search {
 
         //System.out.println(normalizedUserQuery);
         double temp = 0;
-        
         for(double weight : normalizedUserQuery.values()){
             temp += weight * weight;
         }
@@ -352,15 +458,14 @@ public class Search {
                         continue;
                     }
                      top += weightmap.get(index1).get(docId) * normalizedUserQuery.get(index1);
+                    
                 }
                 
                 
             }
         
-            //System.out.println(normalizedWeight);
-            
+            //System.out.println(top);
             double tmp = normalizedWeight.get(docId) * nWeight;
-            //System.out.println(docId);
             sim = (double) top / tmp;
             //System.out.print(sim + " ");
             //System.out.println(docId + "\n");
@@ -371,64 +476,14 @@ public class Search {
 
     }
    
+ 
 
-    public static void sortResults(){
+    //return the sorted Results for constructor
+    public static Map<Integer, Double> sortResultsQuery(){
     	//Creates a sortedResults map to store the key value pairs once sorted
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	int count = 0;
     	//Prints sorted results map
-    	try {
-    	for (Map.Entry<Integer, Double> en : sortedResults.entrySet()) { 
-            //System.out.printf("docID = " + en.getKey() +  
-                          //", Cosine Sim = %.3f %n", en.getValue()); 
-    		if(en.getValue() > 0 && count < 50) {
-    		printTitle(en.getKey(), en.getValue());
-    		count++;
-    		}
-        } 
-    	}catch(Exception e) {System.out.println(e);}
+    	return sortedResults;
     }
-    public static HashMap<Integer, Double> sortByValue(HashMap<Integer, Double> hm) {
-        // Create a list from elements of HashMap 
-        List<Map.Entry<Integer, Double> > list = 
-               new LinkedList<Map.Entry<Integer, Double> >(hm.entrySet()); 
-  
-        // Sort the list 
-        Collections.sort(list, new Comparator<Map.Entry<Integer, Double> >() { 
-            public int compare(Map.Entry<Integer, Double> o1,  
-                               Map.Entry<Integer, Double> o2) 
-            { 
-                return (o2.getValue()).compareTo(o1.getValue()); 
-            } 
-        }); 
-          
-        // put data from sorted list to hashmap  
-        HashMap<Integer, Double> temp = new LinkedHashMap<Integer, Double>(); 
-        for (Map.Entry<Integer, Double> aa : list) { 
-            temp.put(aa.getKey(), aa.getValue()); 
-        } 
-        return temp;     	
-    }
-    public static void printTitle(Integer docID, Double cosSim) throws FileNotFoundException, IOException {
-		int documentID = docID;
-		String fileName = "testing.txt" + "";
-		// int temp = 1;
-		String location = ".I " + documentID + "";
-		String line;
-		//Reads the file to get and print the title of document with docID
-		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			while ((line = br.readLine()) != null) {
-				if (line.contentEquals(location)) {
-					line = br.readLine();
-                    line = br.readLine();
-                    if(cosSim != 0.0){
-                        System.out.println("|DocID= " + documentID + " |Title= " + line + " |Similarity= "+ cosSim);
-                    }
-					// System.out.println(temp+" "+documentID);
-
-					break;
-				}
-			}
-		}
-	}
 }
