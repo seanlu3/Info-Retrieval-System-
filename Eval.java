@@ -117,32 +117,6 @@ public class Eval{
         }
     }
 
-    private static void scanReldocs(String path){
-        String tmp = "";
-        int queryId = 0;
-        int queryId1 = 0;
-        int docId = 0;
-        try{
-            Scanner scanner = new Scanner(new File(path));
-            ArrayList<Integer> docIdInQuery = new ArrayList<Integer>();
-            while (scanner.hasNextLine()){
-                
-                tmp = scanner.nextLine();
-
-                queryId = Integer.parseInt(tmp.substring(0,2));
-                docId = Integer.parseInt(tmp.substring(3,7));
-                
-                docIdInQuery.add(docId);
-                reldocs.put(queryId, docIdInQuery);
-              
-                tmp = scanner.nextLine();
-                queryId1 = queryId;
-                }
-                
-            }catch(Exception e){}
-
-    }
-
     private static void searchQuery(){
         Search search = new Search();
         search.getIdf("posting.txt");
@@ -151,36 +125,49 @@ public class Eval{
         search.normalizeWeight();
         for(int index: queries.keySet()){
             String toBeSearched ="";
-            System.out.println(index);
-            Map<Integer, Double> test = new LinkedHashMap<Integer,Double>();
-            Map<Integer, Double> top10ret = new LinkedHashMap<Integer,Double>();
             for(String index1 : queries.get(index)){
                 toBeSearched += index1;
             }
-            
             //docId with it's similarity score
-            test = search.getResult(toBeSearched);
-            for(Map.Entry<Integer, Double> index12:test.entrySet()){
-                if(top10ret.size()>9) break;
-                top10ret.put(index12.getKey(), index12.getValue());
-                //top10ret.add(index12.getValue());
+            Map<Integer, Double> test = search.getResult(toBeSearched);
+            //System.out.println(toBeSearched);
+            int count = 1;
+            double totalDocsChecked = 0;
+            double totalRelDocs = 0;
+            List<Double> apList = new ArrayList<>();
+            //System.out.println(toBeSearched);
+            for(int st : test.keySet()) {
+            	if (!(test.get(st).isNaN())) {
+            		if(!(test.get(st)<0.1)) {
+            		//System.out.print(st + "\n");
+            		totalDocsChecked++;
+            		try {
+                	Scanner scanner = new Scanner(new File("qrels.text"));
+                	String token1 = "";
+                	String[] queryID;
+                    while (scanner.hasNext()){
+                    	//Checks dictionary line by line
+                        token1 = scanner.nextLine();
+                        queryID = token1.split(" ");
+                        //if(Integer.parseInt(queryID[0]) == count) {
+                        //System.out.println(count + " " + queryID[0] + " " + queryID[1]);
+                        //}
+                        if(Integer.parseInt(queryID[0]) == count && st == Integer.parseInt(queryID[1])) {
+                        	//System.out.println(toBeSearched + ": "+ st + " matched with "+ queryID[1]);
+                        	totalRelDocs++;
+                        	apList.add(totalRelDocs/totalDocsChecked);
+                        }
+                    }
+                    count++;
+                    scanner.close();
+            		}catch(Exception e) {}
+            		}
+            	}
             }
-
-
-
-            System.out.println(top10ret);
-            /*
-            Map.Entry<Integer, Double> entry = test;
-            for ( int i = 0; i < 9; i++){
-                int tem = entry.values().toArray()[i];  
-                System.out.println(tem);
-                
-            }*/
+            System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " returned (" + totalDocsChecked + ") results");
+           
         }
-       
-            
-         
-    
+        
     }
 
 

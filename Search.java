@@ -385,7 +385,8 @@ public class Search {
         double nWeight = 0; //normailized query weight
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
-        
+
+
         Scanner scan = new Scanner(b);
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -411,6 +412,7 @@ public class Search {
         }
         }
 
+        
         
         try {
         //get each term term frequency and store them in the map userQuery.
