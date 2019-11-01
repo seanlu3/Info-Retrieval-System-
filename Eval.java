@@ -23,14 +23,12 @@ public class Eval{
    // private static Map<String, Integer> query = new TreeMap<String, Integer>();
 
     private static Map<Integer, ArrayList<String>> queries = new TreeMap<Integer, ArrayList<String>>();
-    private static Map<Integer, ArrayList<Integer>> reldocs = new TreeMap<Integer, ArrayList<Integer>>();
+
 
     public static void main(String args[]){
         createStopwordList(stopwordPath);
         createTreeMap(queryTextFilePath);  
-        scanReldocs(qrelsFilePath) ;
-        System.out.print(reldocs);
-        //searchQuery() ;
+        searchQuery() ;
         //System.out.println(queries);    
     }
 
@@ -131,6 +129,7 @@ public class Eval{
             //docId with it's similarity score
             Map<Integer, Double> test = search.getResult(toBeSearched);
             //System.out.println(toBeSearched);
+            //System.out.println(test);
             int count = 1;
             double totalDocsChecked = 0;
             double totalRelDocs = 0;
@@ -149,9 +148,9 @@ public class Eval{
                     	//Checks dictionary line by line
                         token1 = scanner.nextLine();
                         queryID = token1.split(" ");
-                        //if(Integer.parseInt(queryID[0]) == count) {
-                        //System.out.println(count + " " + queryID[0] + " " + queryID[1]);
-                        //}
+                        if(Integer.parseInt(queryID[0]) == count) {
+                            System.out.println(count + " " + queryID[0] + " " + queryID[1]);
+                        }
                         if(Integer.parseInt(queryID[0]) == count && st == Integer.parseInt(queryID[1])) {
                         	//System.out.println(toBeSearched + ": "+ st + " matched with "+ queryID[1]);
                         	totalRelDocs++;
