@@ -113,6 +113,7 @@ public class Eval{
         }
     }
 
+    	//Searches query on query.txt and calculates MAP value
     private static void searchQuery(){
         Search search = new Search();
         search.getIdf("posting.txt");
