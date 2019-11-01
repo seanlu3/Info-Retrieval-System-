@@ -172,8 +172,10 @@ public class Eval{
             for(double db : apList) {
         	   temp += db;
            }
+            if(!(Double.isNaN(temp/(totalRel/totalDocsChecked)))){
             System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked));
             mapList.add(temp/(totalRel/totalDocsChecked));
+            }
         }
         double acc=0.0;
         double counter = 0;
