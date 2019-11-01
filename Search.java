@@ -208,7 +208,7 @@ public class Search {
         Scanner scan = new Scanner(System.in);
         System.out.println("Stop word removal/stemming? (y/n): ");
         stopstem = scan.nextLine();
-        System.out.println(stopstem);
+        //System.out.println(stopstem);
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
