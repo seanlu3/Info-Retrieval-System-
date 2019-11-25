@@ -168,7 +168,7 @@ public class Search {
     			}
     			//Assigns inner map to the weight map using the current term (entry.getKey()) as the key
     			weightmap.put(entry.getKey(), innerweightmap);
-    		}System.out.println(weightmap);
+    		}//System.out.println(weightmap);
 
     }
 
@@ -297,13 +297,7 @@ public class Search {
 
     }
     
-    //get the docID and cosine similarity score for each query term 
-    //@param query term from query.text
-    //@return a map contains docID and cosine similarity score
-   public static Map<Integer, Double> getResult(String a){
-        userQuary(a);
-        return sortResultsQuery();
-    }
+
 
    
 
@@ -374,6 +368,14 @@ public class Search {
 			}
 		}
     }
+
+    //get the docID and cosine similarity score for each query term 
+    //@param query term from query.text
+    //@return a map contains docID and cosine similarity score
+   public static Map<Integer, Double> getResult(String a){
+    userQuary(a);
+    return sortResultsQuery();
+}
     
 
     //function call for constructor 
