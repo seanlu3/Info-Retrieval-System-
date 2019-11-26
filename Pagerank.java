@@ -16,8 +16,10 @@ import java.io.PrintWriter;
 
 public class Pagerank{
     private static String path = "test.txt";
-    final private static Integer numCollection = 3204;
-    private static double[][] array = new double [numCollection][numCollection];
+	final private static Integer numCollection = 3204;
+	final private static Double dampingFactor = 0.85;
+	private static double[][] array = new double [numCollection][numCollection];
+	public static double[] probVector = new double [numCollection];
     private static Map<Integer, double[][]> listMap = new TreeMap<Integer, double[][]>();
     public static void main (String[] args){
     	iterateFile(path);
@@ -25,8 +27,11 @@ public class Pagerank{
     	//System.out.println(array[1982][1]);
         normalizeMatrix();
         //System.out.println(array[1982][1]);
-        probabilityStep();
-        //System.out.println(array[1982][1]);
+		probabilityStep();
+		getFinalMatrixP();
+		iterateMatrixP();
+		System.out.println(array[1982][1]);
+		System.out.println(probVector[1]);
     }
 
     //
@@ -122,13 +127,42 @@ public class Pagerank{
     			//checks for all entries in the array above 0 
     			if(array[i][j]>0) {
     				//1 - 0.85 = 0.15
-    				array[i][j]=(array[i][j]*0.15);
+    				array[i][j]=(array[i][j]* (1-dampingFactor));
     			}
     		}
 
     	}
-    }
+	}
+	
+	private static void getFinalMatrixP() {
+		for (int i = 1; i < array.length; i++) {
+			for (int j = 1; j < array.length; j++) {
+    			//checks for all entries in the array above 0 
+    			if(array[i][j]>0) {
+    				//damping factor/number of document in this collection
+    				array[i][j]=(array[i][j]*(dampingFactor/numCollection));
+    			}
+    		}
+		}
+	}
 
+	private static void iterateMatrixP(){
+		int iteration = 15;
+		double[] temp = new double[numCollection];
+		double sum = 0;
+		temp[1] = 1;
+		while (iteration > 0){
+			for(int i =1; i <array.length; i++){
+				for (int j = 1; j < array.length; j++) {
+					sum += temp[j] * array[j][i];
+				}
+				probVector[i] = sum;
+			}
+			temp = probVector;
+			iteration--;
+		}
+
+	}
 
 
 
