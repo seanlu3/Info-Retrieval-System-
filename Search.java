@@ -208,7 +208,7 @@ public class Search {
         Scanner scan = new Scanner(System.in);
         System.out.println("Stop word removal/stemming? (y/n): ");
         stopstem = scan.nextLine();
-        System.out.println(stopstem);
+        //System.out.println(stopstem);
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -297,13 +297,7 @@ public class Search {
 
     }
     
-    //get the docID and cosine similarity score for each query term 
-    //@param query term from query.text
-    //@return a map contains docID and cosine similarity score
-   public static Map<Integer, Double> getResult(String a){
-        userQuary(a);
-        return sortResultsQuery();
-    }
+
 
    
 
@@ -374,6 +368,14 @@ public class Search {
 			}
 		}
     }
+
+    //get the docID and cosine similarity score for each query term 
+    //@param query term from query.text
+    //@return a map contains docID and cosine similarity score
+   public static Map<Integer, Double> getResult(String a){
+    userQuary(a);
+    return sortResultsQuery();
+}
     
 
     //function call for constructor 

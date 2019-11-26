@@ -115,12 +115,15 @@ public class Eval{
         }
     }
 
+    	//Searches query on query.txt and calculates MAP value
     private static void searchQuery(){
         Search search = new Search();
         search.getIdf("posting.txt");
         search.getItf("posting.txt");
         search.getWeight("dictionary.txt");
         search.normalizeWeight();
+        int count = 1;
+        List<Double> mapList = new ArrayList<>();
         for(int index: queries.keySet()){
             String toBeSearched ="";
             for(String index1 : queries.get(index)){
@@ -129,10 +132,10 @@ public class Eval{
             //docId with it's similarity score
             Map<Integer, Double> test = search.getResult(toBeSearched);
             //System.out.println(toBeSearched);
-            //System.out.println(test);
-            int count = 1;
+            
             double totalDocsChecked = 0;
             double totalRelDocs = 0;
+            double totalRel=0;
             List<Double> apList = new ArrayList<>();
             //System.out.println(toBeSearched);
             for(int st : test.keySet()) {
@@ -156,16 +159,36 @@ public class Eval{
                         	totalRelDocs++;
                         	apList.add(totalRelDocs/totalDocsChecked);
                         }
+                        if (Integer.parseInt(queryID[0]) == count) {
+                        	totalRel++;
+                        }
                     }
-                    count++;
+                    //System.out.println(toBeSearched + " --> " + count + " " + queryID[0]);
                     scanner.close();
             		}catch(Exception e) {}
             		}
             	}
             }
-            System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " returned (" + totalDocsChecked + ") results");
-           
+            count++;
+            //System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " relevant (#" + totalRel/totalDocsChecked + ") results");
+           double temp = 0.0;
+            for(double db : apList) {
+        	   temp += db;
+           }
+            if(!(Double.isNaN(temp/(totalRel/totalDocsChecked)))){
+            System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked));
+            mapList.add(temp/(totalRel/totalDocsChecked));
+            }
         }
+        double acc=0.0;
+        double counter = 0;
+        for(double db : mapList) {
+        	if(!(Double.isNaN(db))) {
+        	acc+=db;
+        	counter++;
+        	}
+        }
+        System.out.println("Final MAP value is: " + acc/counter);
         
     }
 
