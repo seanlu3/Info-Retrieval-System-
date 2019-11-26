@@ -23,7 +23,7 @@ public class Pagerank{
     	iterateFile(path);
         //createMatrix(path);
         normalizeMatrix();
-        System.out.print(array[205][1]);
+        //System.out.print(array[1982][1]);
     }
 
     	//***This is a variation of your createMatrix code***
@@ -47,8 +47,10 @@ public class Pagerank{
                 	
                 	tmp = scanner.nextLine();
                 	//System.out.println("Document #" + docId);
+                	//Checks if the end of section .X has been reached
                 		while (!(tmp.substring(0,2).toLowerCase().equals(".i"))) {
                 			//System.out.println(tmp);
+                			//If not split each line under .X by "	"
                 			count = 0;
                 			String[] arr = tmp.split("	");    
 
@@ -115,20 +117,26 @@ public class Pagerank{
         }
     }*/
 
+    //Iterates through array and keeps track of total number of 1's on each
+    //row and afterwards will normalize each row
+    //Example: If two 1's exist in one row then it will normalize each to 0.5
     private static void normalizeMatrix(){
-        for (int i = 1; i < array[0].length; i++ ){
-            double sum = 0;
-            for(int j = 1; j <  array[0].length; j++){
-                sum += array[i][j];
-            }
-            //if there is no document referencing the current document, we change every element in entire row to 1/3204. 
-            if (sum == 0){
-                for(int j = 1; j <  array[0].length; j++){
-                    array[i][j] = 1/numCollection;
-                    
-                }
-            }
-        }
+    	int count;
+    	for (int i = 1; i < array.length; i++) {
+    		count = 0;
+    		for (int j = 1; j < array.length; j++) {
+    			if(array[i][j]==1) {
+    				count++;
+    			}
+    		}
+    		//System.out.println("DocId: "+i + " points to a total of "+count+" docs ");
+    		for (int x = 1; x<array.length; x++) {
+    			if(array[i][x]==1) {
+    				array[i][x]=(double)1/count;
+    				//System.out.println(array[i][x]);
+    			}
+    		}
+    	}
     }
 
 
