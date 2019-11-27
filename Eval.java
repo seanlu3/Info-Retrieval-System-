@@ -139,7 +139,7 @@ public class Eval{
             //--Where we combine cosine similarity score with pagerank score for each document-------------
             getPagerankVector();
             for (Integer i : test.keySet()){
-                double finalScore = (test.get(i) * 0.5) + (probVector[i]* 0.5);
+                double finalScore = (test.get(i) * 0.7) + (probVector[i]* 0.3);
                 System.out.println(finalScore);
             }
 
