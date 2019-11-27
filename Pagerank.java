@@ -12,14 +12,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Provider;
 
 
 public class Pagerank{
     private static String path = "cacm.all";
-	final private static Integer numCollection = 3204;
-	final private static Double dampingFactor = 0.85;
-	private static double[][] array = new double [numCollection+1][numCollection+1];
-	public static double[] probVector = new double [numCollection+1]; // this will be the final Probability distribution vector that contains normalized pagerank for each document.
+    final private static Integer numCollection = 3205;
+    final private static Double dampingFactor = 0.85;
+    private static double[][] array = new double [numCollection][numCollection];
+    public static double[] probVector = new double [numCollection]; // this will be the final Probability distribution vector that contains normalized pagerank for each document.
     private static Map<Integer, double[][]> listMap = new TreeMap<Integer, double[][]>();
     public static void main (String[] args){
     	iterateFile(path);
@@ -27,11 +28,11 @@ public class Pagerank{
     	//System.out.println(array[1982][1]);
         normalizeMatrix();
         //System.out.println(array[1982][1]);
-		probabilityStep();
-		getFinalMatrixP();
-		iterateMatrixP();
-		System.out.println(array[1982][1]);
-		System.out.println(probVector[3204]);
+        probabilityStep();
+        getFinalMatrixP();
+        iterateMatrixP();
+        System.out.println(array[1982][1]);
+        System.out.println(probVector[1982]);
     }
 
     //
@@ -127,14 +128,15 @@ public class Pagerank{
     			//checks for all entries in the array above 0 
     			if(array[i][j]>0) {
     				//1 - 0.85 = 0.15
-    				array[i][j]=(array[i][j]* (1-dampingFactor));
+    				array[i][j]=(array[i][j]*0.15);
     			}
     		}
 
     	}
-	}
-	
-	private static void getFinalMatrixP() {
+    }
+
+    //Adding (damping factor/number of document in collection) to each element in array
+    private static void getFinalMatrixP() {
 		for (int i = 1; i < array.length; i++) {
 			for (int j = 1; j < array.length; j++) {
     			//damping factor/number of document in this collection
@@ -144,7 +146,7 @@ public class Pagerank{
 		}
 	}
 
-	private static void iterateMatrixP(){
+    private static void iterateMatrixP(){
 		int iteration = 15;
 		double[] temp = new double[numCollection];
 		temp[1] = 1;
@@ -162,16 +164,10 @@ public class Pagerank{
 		//normalize probability distribution vector by multiplying every element with 10000
 		for (int i=1; i<array.length; i++){
 			probVector[i] = probVector[i] * 1000;
-		}
-		/*checking if there is an element is greater than 1
-		for (int i=1; i<array.length; i++){
-			if(probVector[i] > 1){
-				System.out.println(probVector[i]);
-			} */
-		}
-	
+        }
+    }
 
-	public double[] parseArray(){
+    public double[] parseArray(){
 		iterateFile(path);
         normalizeMatrix();
 		probabilityStep();
