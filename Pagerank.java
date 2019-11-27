@@ -15,11 +15,11 @@ import java.io.PrintWriter;
 
 
 public class Pagerank{
-    private static String path = "test.txt";
+    private static String path = "cacm.all";
 	final private static Integer numCollection = 3204;
 	final private static Double dampingFactor = 0.85;
-	private static double[][] array = new double [numCollection][numCollection];
-	public static double[] probVector = new double [numCollection];
+	private static double[][] array = new double [numCollection+1][numCollection+1];
+	public static double[] probVector = new double [numCollection+1]; // this will be the final Probability distribution vector that contains normalized pagerank for each document.
     private static Map<Integer, double[][]> listMap = new TreeMap<Integer, double[][]>();
     public static void main (String[] args){
     	iterateFile(path);
@@ -31,7 +31,7 @@ public class Pagerank{
 		getFinalMatrixP();
 		iterateMatrixP();
 		System.out.println(array[1982][1]);
-		System.out.println(probVector[1]);
+		System.out.println(probVector[3204]);
     }
 
     //
@@ -137,11 +137,9 @@ public class Pagerank{
 	private static void getFinalMatrixP() {
 		for (int i = 1; i < array.length; i++) {
 			for (int j = 1; j < array.length; j++) {
-    			//checks for all entries in the array above 0 
-    			if(array[i][j]>0) {
-    				//damping factor/number of document in this collection
-    				array[i][j]=(array[i][j]*(dampingFactor/numCollection));
-    			}
+    			//damping factor/number of document in this collection
+    			array[i][j]=(array[i][j]+ (dampingFactor/numCollection));
+    			
     		}
 		}
 	}
@@ -149,10 +147,10 @@ public class Pagerank{
 	private static void iterateMatrixP(){
 		int iteration = 15;
 		double[] temp = new double[numCollection];
-		double sum = 0;
 		temp[1] = 1;
 		while (iteration > 0){
 			for(int i =1; i <array.length; i++){
+				double sum = 0;
 				for (int j = 1; j < array.length; j++) {
 					sum += temp[j] * array[j][i];
 				}
@@ -161,7 +159,25 @@ public class Pagerank{
 			temp = probVector;
 			iteration--;
 		}
+		//normalize probability distribution vector by multiplying every element with 10000
+		for (int i=1; i<array.length; i++){
+			probVector[i] = probVector[i] * 1000;
+		}
+		/*checking if there is an element is greater than 1
+		for (int i=1; i<array.length; i++){
+			if(probVector[i] > 1){
+				System.out.println(probVector[i]);
+			} */
+		}
+	
 
+	public double[] parseArray(){
+		iterateFile(path);
+        normalizeMatrix();
+		probabilityStep();
+		getFinalMatrixP();
+		iterateMatrixP();
+		return probVector;
 	}
 
 

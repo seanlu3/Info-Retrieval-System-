@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Provider;
 
 
 
@@ -19,7 +20,9 @@ public class Eval{
     private static String queryTextFilePath = "query1.text";
     private static String qrelsFilePath = "qrels.text";
     private static String stopwordPath = "stopwords.txt";
+    final static Integer numCollection = 3204;
     private static ArrayList<String> stopwordList = new ArrayList<String>();
+    private static double[] probVector = new double[numCollection + 1];
    // private static Map<String, Integer> query = new TreeMap<String, Integer>();
 
     private static Map<Integer, ArrayList<String>> queries = new TreeMap<Integer, ArrayList<String>>();
@@ -132,6 +135,16 @@ public class Eval{
             //docId with it's similarity score
             Map<Integer, Double> test = search.getResult(toBeSearched);
             //System.out.println(toBeSearched);
+
+            //--Where we combine cosine similarity score with pagerank score for each document-------------
+            getPagerankVector();
+            for (Integer i : test.keySet()){
+                double finalScore = (test.get(i) * 0.5) + (probVector[i]* 0.5);
+                System.out.println(finalScore);
+            }
+
+
+            //-----------------------------------------------------------------
             
             double totalDocsChecked = 0;
             double totalRelDocs = 0;
@@ -152,7 +165,7 @@ public class Eval{
                         token1 = scanner.nextLine();
                         queryID = token1.split(" ");
                         if(Integer.parseInt(queryID[0]) == count) {
-                            System.out.println(count + " " + queryID[0] + " " + queryID[1]);
+                            //System.out.println(count + " " + queryID[0] + " " + queryID[1]);
                         }
                         if(Integer.parseInt(queryID[0]) == count && st == Integer.parseInt(queryID[1])) {
                         	//System.out.println(toBeSearched + ": "+ st + " matched with "+ queryID[1]);
@@ -176,7 +189,7 @@ public class Eval{
         	   temp += db;
            }
             if(!(Double.isNaN(temp/(totalRel/totalDocsChecked)))){
-            System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked));
+            //System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked) + "\n");
             mapList.add(temp/(totalRel/totalDocsChecked));
             }
         }
@@ -188,12 +201,15 @@ public class Eval{
         	counter++;
         	}
         }
-        System.out.println("Final MAP value is: " + acc/counter);
+       // System.out.println("Final MAP value is: " + acc/counter);
         
     }
 
 
-
+    private static void getPagerankVector(){
+        Pagerank array = new Pagerank();
+        probVector = array.parseArray();
+    }
 /*
     private static void updateTreeMaps(String input, int id, Boolean stopword){
         String temp;
