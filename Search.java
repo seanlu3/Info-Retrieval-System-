@@ -356,7 +356,7 @@ public class Search {
         // Create a list from elements of HashMap 
         List<Map.Entry<Integer, Double> > list = 
                new LinkedList<Map.Entry<Integer, Double> >(hm.entrySet()); 
-  
+        
         // Sort the list 
         Collections.sort(list, new Comparator<Map.Entry<Integer, Double> >() { 
             public int compare(Map.Entry<Integer, Double> o1,  
@@ -408,12 +408,13 @@ public class Search {
         String token1 = "";
         String stopstem = "y";
         double nWeight = 0; //normailized query weight
+        //double w1,w2 = 0.5;
         Map<String, Integer> userQuery = new TreeMap<String, Integer>();
         Map<String, Double> normalizedUserQuery = new TreeMap<String, Double>();
 
 
-        Scanner scan = new Scanner(b);
-        token1 = scan.nextLine();
+        Scanner scan1 = new Scanner(b);
+        token1 = scan1.nextLine();
         token1 = token1.toLowerCase();
         //System.out.println(token1);
         String[] term = token1.split(" ");
@@ -468,7 +469,7 @@ public class Search {
         }
         nWeight = Math.sqrt(temp);
         //System.out.println(nWeight);
-        scan.close();
+        scan1.close();
 
 
 
@@ -505,9 +506,21 @@ public class Search {
 
     //return the sorted Results for constructor
     public static Map<Integer, Double> sortResultsQuery(){
-    	//Creates a sortedResults map to store the key value pairs once sorted
+        //Creates a sortedResults map to store the key value pairs once sorted
+     /*   Pagerank array = new Pagerank();
+        probVector = array.parseArray();
+        //Iterates through results map (contains relevant docs to query)
+    	for(Map.Entry<Integer, Double> entry : results.entrySet()) {
+    		if(entry.getValue()>0) {
+    			//Combines the already calculate cosine sim score with the
+    			//pageRank score (normalized with w1 and w2 values of 0.5)
+    			//We can replace 0.5 with variable for user input
+    			double norm = (w1*(entry.getValue()))+(w2*(probVector[entry.getKey()]));
+    			//System.out.println(norm);
+    			results.put(entry.getKey(), norm);
+    		}
+    	}*/
     	Map<Integer, Double> sortedResults = sortByValue(results);
-    	int count = 0;
     	//Prints sorted results map
     	return sortedResults;
     }

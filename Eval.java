@@ -142,8 +142,6 @@ public class Eval{
             //    double finalScore = (test.get(i) * 0.5) + (probVector[i]* 0.5);
             //    System.out.println(test.get(i) + " | " + finalScore);
             //}
-
-
             //-----------------------------------------------------------------
             
             double totalDocsChecked = 0;
