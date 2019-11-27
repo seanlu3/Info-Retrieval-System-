@@ -12,12 +12,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Provider;
 
 
 public class Pagerank{
-    private static String path = "test.txt";
-    final private static Integer numCollection = 3204;
+    private static String path = "cacm.all";
+    final private static Integer numCollection = 3205;
+    final private static Double dampingFactor = 0.85;
     private static double[][] array = new double [numCollection][numCollection];
+    public static double[] probVector = new double [numCollection]; // this will be the final Probability distribution vector that contains normalized pagerank for each document.
     private static Map<Integer, double[][]> listMap = new TreeMap<Integer, double[][]>();
     public static void main (String[] args){
     	iterateFile(path);
@@ -26,7 +29,10 @@ public class Pagerank{
         normalizeMatrix();
         //System.out.println(array[1982][1]);
         probabilityStep();
+        getFinalMatrixP();
+        iterateMatrixP();
         //System.out.println(array[1982][1]);
+        //System.out.println(probVector[1982]);
     }
 
     //
@@ -53,7 +59,7 @@ public class Pagerank{
                 //Checks if following section is .X section
                 if (tmp.toLowerCase().equals(".x")) {
                 	docId++;
-                	
+
                 	tmp = scanner.nextLine();
                 	//System.out.println("Document #" + docId);
                 	//Checks if the end of section .X has been reached
@@ -89,7 +95,7 @@ public class Pagerank{
             scanner.close();
 
         } catch(Exception e){
-            e.printStackTrace();
+            
         }
     }
 
@@ -114,7 +120,7 @@ public class Pagerank{
     		}
     	}
     }
-    
+
     //Multiplies each non-zero entry by (1-(0.85))
     private static void probabilityStep() {
     	for (int i = 1; i < array.length; i++) {
@@ -129,7 +135,47 @@ public class Pagerank{
     	}
     }
 
+    //Adding (damping factor/number of document in collection) to each element in array
+    private static void getFinalMatrixP() {
+		for (int i = 1; i < array.length; i++) {
+			for (int j = 1; j < array.length; j++) {
+    			//damping factor/number of document in this collection
+    			array[i][j]=(array[i][j]+ (dampingFactor/numCollection));
+
+    		}
+		}
+	}
+
+    private static void iterateMatrixP(){
+		int iteration = 15;
+		double[] temp = new double[numCollection];
+		temp[1] = 1;
+		while (iteration > 0){
+			for(int i =1; i <array.length; i++){
+				double sum = 0;
+				for (int j = 1; j < array.length; j++) {
+					sum += temp[j] * array[j][i];
+				}
+				probVector[i] = sum;
+			}
+			temp = probVector;
+			iteration--;
+		}
+		//normalize probability distribution vector by multiplying every element with 10000
+		for (int i=1; i<array.length; i++){
+			probVector[i] = probVector[i] * 1000;
+        }
+    }
+
+    public double[] parseArray(){
+		iterateFile(path);
+        normalizeMatrix();
+		probabilityStep();
+		getFinalMatrixP();
+		iterateMatrixP();
+		return probVector;
+	}
 
 
 
-}
+} 
