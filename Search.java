@@ -507,7 +507,16 @@ public class Search {
     //return the sorted Results for constructor
     public static Map<Integer, Double> sortResultsQuery(){
         //Creates a sortedResults map to store the key value pairs once sorted
-     /*   Pagerank array = new Pagerank();
+        double w1= 0.5;
+        double w2 = 0.5;
+        /*Scanner scan = new Scanner(System.in);
+        //System.out.println(stopstem);
+        System.out.println("enter numbers for w1");
+        w1 = Double.parseDouble(scan.nextLine()) ;
+        System.out.println("enter numbers for w2");
+        w2 = Double.parseDouble(scan.nextLine()) ;
+        scan.close();*/
+      /* Pagerank array = new Pagerank();
         probVector = array.parseArray();
         //Iterates through results map (contains relevant docs to query)
     	for(Map.Entry<Integer, Double> entry : results.entrySet()) {

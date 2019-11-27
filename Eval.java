@@ -127,21 +127,23 @@ public class Eval{
         search.normalizeWeight();
         int count = 1;
         List<Double> mapList = new ArrayList<>();
+        getPagerankVector();
         for(int index: queries.keySet()){
             String toBeSearched ="";
             for(String index1 : queries.get(index)){
                 toBeSearched += index1;
             }
+        
             //docId with it's similarity score
             Map<Integer, Double> test = search.getResult(toBeSearched);
-            //System.out.println(toBeSearched);
+           // System.out.println(test);
 
             //--Where we combine cosine similarity score with pagerank score for each document-------------
-           // getPagerankVector();
-            //for (Integer i : test.keySet()){
-            //    double finalScore = (test.get(i) * 0.5) + (probVector[i]* 0.5);
-            //    System.out.println(test.get(i) + " | " + finalScore);
-            //}
+            
+          
+               double finalScore = (test.get(index) * 0.5) + (probVector[index]* 0.5);
+               test.put(index, finalScore);
+          
             //-----------------------------------------------------------------
             
             double totalDocsChecked = 0;
@@ -187,10 +189,11 @@ public class Eval{
         	   temp += db;
            }
             if(!(Double.isNaN(temp/(totalRel/totalDocsChecked)))){
-            System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked) + "\n");
+           System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked) + "\n");
             mapList.add(temp/(totalRel/totalDocsChecked));
             }
         }
+        
         double acc=0.0;
         double counter = 0;
         for(double db : mapList) {
