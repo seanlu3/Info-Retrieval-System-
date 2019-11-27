@@ -21,6 +21,8 @@ import java.io.FileReader;
 public class Search {
     private static String dictionaryPath = "cacm.all";
     private static String postingPath = "posting.txt";
+    private static double w1 = 0;
+    private static double w2 = 0;
     final static Double NUMTOTALDOCS = (double) 3204.0; //total number of document is 3204.
     private static Map<String, Map<Integer, Double>> postingitf = new TreeMap<String, Map<Integer, Double>>();
     private static Map<String, Double> dictionaryidf = new TreeMap<String, Double>();
@@ -209,6 +211,10 @@ public class Search {
         System.out.println("Stop word removal/stemming? (y/n): ");
         stopstem = scan.nextLine();
         //System.out.println(stopstem);
+        System.out.println("enter numbers for w1");
+        w1 = Double.parseDouble(scan.nextLine()) ;
+        System.out.println("enter numbers for w2");
+        w2 = Double.parseDouble(scan.nextLine()) ;
         System.out.println("Search: ");
         token1 = scan.nextLine();
         token1 = token1.toLowerCase();
@@ -312,7 +318,8 @@ public class Search {
     	//Creates a sortedResults map to store the key value pairs once sorted
     	//***********************************
     	//Before it sorts the map of docID, cosSim it adds the normalized
-    	//pageRank score to each relevant doc
+        //pageRank score to each relevant do
+       
         Pagerank array = new Pagerank();
         probVector = array.parseArray();
         //Iterates through results map (contains relevant docs to query)
@@ -321,7 +328,7 @@ public class Search {
     			//Combines the already calculate cosine sim score with the
     			//pageRank score (normalized with w1 and w2 values of 0.5)
     			//We can replace 0.5 with variable for user input
-    			double norm = (0.5*(entry.getValue()))+(0.5*(probVector[entry.getKey()]));
+    			double norm = (w1*(entry.getValue()))+(w2*(probVector[entry.getKey()]));
     			System.out.println(norm);
     			results.put(entry.getKey(), norm);
     		}
