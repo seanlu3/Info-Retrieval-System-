@@ -137,7 +137,7 @@ public class Eval{
             //System.out.println(toBeSearched);
 
             //--Where we combine cosine similarity score with pagerank score for each document-------------
-            getPagerankVector();
+           // getPagerankVector();
             //for (Integer i : test.keySet()){
             //    double finalScore = (test.get(i) * 0.5) + (probVector[i]* 0.5);
             //    System.out.println(test.get(i) + " | " + finalScore);
@@ -181,13 +181,13 @@ public class Eval{
             	}
             }
             count++;
-            //System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " relevant (#" + totalRel/totalDocsChecked + ") results");
+            System.out.println("List of precision values from query: "+ toBeSearched + " is: "+ apList + " relevant (#" + totalRel/totalDocsChecked + ") results");
            double temp = 0.0;
             for(double db : apList) {
         	   temp += db;
            }
             if(!(Double.isNaN(temp/(totalRel/totalDocsChecked)))){
-            //System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked) + "\n");
+            System.out.println("AP value for query: " + toBeSearched + " is: " + temp/(totalRel/totalDocsChecked) + "\n");
             mapList.add(temp/(totalRel/totalDocsChecked));
             }
         }
@@ -199,7 +199,7 @@ public class Eval{
         	counter++;
         	}
         }
-       // System.out.println("Final MAP value is: " + acc/counter);
+        System.out.println("Final MAP value is: " + acc/counter);
         
     }
 
