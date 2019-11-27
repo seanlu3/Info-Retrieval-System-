@@ -27,7 +27,7 @@ public class Search {
     private static Map<String, Map<Integer, Double>> weightmap = new TreeMap<String, Map<Integer, Double>>();
     private static Map<Integer, Double> normalizedWeight = new TreeMap<Integer, Double>();
     private static HashMap<Integer, Double> results = new HashMap<Integer, Double>();
-   
+    private static double[] probVector = new double[3205];
 
 
 
@@ -297,12 +297,36 @@ public class Search {
 
     }
     
-
+    //get the docID and cosine similarity score for each query term 
+    //@param query term from query.text
+    //@return a map contains docID and cosine similarity score
+   public static Map<Integer, Double> getResult(String a){
+        userQuary(a);
+        return sortResultsQuery();
+    }
 
    
 
     private static void sortResults(){
+    	
     	//Creates a sortedResults map to store the key value pairs once sorted
+    	//***********************************
+    	//Before it sorts the map of docID, cosSim it adds the normalized
+    	//pageRank score to each relevant doc
+        Pagerank array = new Pagerank();
+        probVector = array.parseArray();
+        //Iterates through results map (contains relevant docs to query)
+    	for(Map.Entry<Integer, Double> entry : results.entrySet()) {
+    		if(entry.getValue()>0) {
+    			//Combines the already calculate cosine sim score with the
+    			//pageRank score (normalized with w1 and w2 values of 0.5)
+    			//We can replace 0.5 with variable for user input
+    			double norm = (0.5*(entry.getValue()))+(0.5*(probVector[entry.getKey()]));
+    			System.out.println(norm);
+    			results.put(entry.getKey(), norm);
+    		}
+    	}
+    	//**********************************
     	Map<Integer, Double> sortedResults = sortByValue(results);
     	int count = 0;
     	//Prints sorted results map
@@ -368,14 +392,6 @@ public class Search {
 			}
 		}
     }
-
-    //get the docID and cosine similarity score for each query term 
-    //@param query term from query.text
-    //@return a map contains docID and cosine similarity score
-   public static Map<Integer, Double> getResult(String a){
-    userQuary(a);
-    return sortResultsQuery();
-}
     
 
     //function call for constructor 

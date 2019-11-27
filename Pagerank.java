@@ -31,8 +31,8 @@ public class Pagerank{
         probabilityStep();
         getFinalMatrixP();
         iterateMatrixP();
-        System.out.println(array[1982][1]);
-        System.out.println(probVector[1982]);
+        //System.out.println(array[1982][1]);
+        //System.out.println(probVector[1982]);
     }
 
     //
@@ -59,7 +59,7 @@ public class Pagerank{
                 //Checks if following section is .X section
                 if (tmp.toLowerCase().equals(".x")) {
                 	docId++;
-                	
+
                 	tmp = scanner.nextLine();
                 	//System.out.println("Document #" + docId);
                 	//Checks if the end of section .X has been reached
@@ -95,7 +95,7 @@ public class Pagerank{
             scanner.close();
 
         } catch(Exception e){
-            e.printStackTrace();
+            
         }
     }
 
@@ -120,7 +120,7 @@ public class Pagerank{
     		}
     	}
     }
-    
+
     //Multiplies each non-zero entry by (1-(0.85))
     private static void probabilityStep() {
     	for (int i = 1; i < array.length; i++) {
@@ -141,7 +141,7 @@ public class Pagerank{
 			for (int j = 1; j < array.length; j++) {
     			//damping factor/number of document in this collection
     			array[i][j]=(array[i][j]+ (dampingFactor/numCollection));
-    			
+
     		}
 		}
 	}
@@ -178,4 +178,4 @@ public class Pagerank{
 
 
 
-}
+} 
