@@ -126,8 +126,16 @@ public class Eval{
         search.getWeight("dictionary.txt");
         search.normalizeWeight();
         int count = 1;
+        double w1 = 0;
+        double w2 = 0;
         List<Double> mapList = new ArrayList<>();
         getPagerankVector();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("enter numbers for w1");
+        w1 = Double.parseDouble(scan.nextLine()) ;
+        System.out.println("enter numbers for w2");
+        w2 = Double.parseDouble(scan.nextLine()) ;
+        scan.close();
         for(int index: queries.keySet()){
             String toBeSearched ="";
             for(String index1 : queries.get(index)){
@@ -141,7 +149,7 @@ public class Eval{
             //--Where we combine cosine similarity score with pagerank score for each document-------------
             
           
-               double finalScore = (test.get(index) * 0.5) + (probVector[index]* 0.5);
+               double finalScore = (test.get(index) * w1) + (probVector[index]* w2);
                test.put(index, finalScore);
           
             //-----------------------------------------------------------------
